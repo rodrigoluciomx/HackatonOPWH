@@ -1,0 +1,65 @@
+import { NearBindgen, near, call, view, Vector } from 'near-sdk-js'
+
+// Estructura para almacenar los temas y votos
+class Topic {
+  topic: string;
+  votes: number;
+  constructor(topic: string, votes: number) {
+    this.topic = topic;
+    this.votes = votes;
+  }
+}
+
+// Decorador para generar código y que sea un contrato NEAR válido y exponer las funciones previstas para poder llamarlas externamente.
+@NearBindgen({})
+class VotingSystem {
+  // Vector donde almacenaremos todos los temas
+  topics: Vector<Topic> = new Vector<Topic>("t");
+
+  @call({ payableFunction: true })
+  add_topic({ topic }: { topic: string }) {
+    // Recuperamos la cuenta que firma la transacción
+    const sender = near.predecessorAccountId();
+
+    // Creamos una constante con su valor
+    const newTopic: Topic = new Topic(topic, 0);
+
+    // Agregamos el tema al vector
+    this.topics.push(newTopic);
+  }
+
+  @call({ payableFunction: true })
+  vote_topic({ topic }: { topic: string }) {
+    // Recuperamos la cuenta que firma la transacción
+    const sender = near.predecessorAccountId();
+
+    // Buscamos el tema en el vector de temas
+    for (let i = 0; i < this.topics.length; i++) {
+      if (this.topics[i].topic == topic) {
+        // Verificamos que el remitente no haya votado previamente por este tema
+        for (let j = 0; j < this.topics[i].votes.length; j++) {
+          if (this.topics[i].votes[j] == sender) {
+            // El remitente ya ha votado por este tema
+            return;
+          }
+        }
+        // Agregamos el voto al tema correspondiente
+        this.topics[i].votes.push(sender);
+        this.topics[i].votes += 1;
+        return;
+      }
+    }
+  }
+
+  @view({})
+  get_topics({ from_index = 0, limit = 10 }: { from_index: number, limit: number }): Topic[] {
+    // Recuperamos los temas en el segmento solicitado
+    return this.topics.toArray().slice(from_index, from_index + limit);
+  }
+
+  @view({})
+  total_topics(): number { 
+    // Recuperamos el total de temas
+    return this.topics.length 
+  }
+}
