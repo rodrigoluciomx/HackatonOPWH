@@ -1,5 +1,5 @@
-const contract = "owaguestbook.testnet";
-const messages = Near.view(contract, "get_messages", {
+const contract = "dev-1685136473783-43667122946905";
+const messages = Near.view(contract, "get_topics", {
   from_index: 0,
   limit: 10,
 }).reverse();
@@ -17,8 +17,8 @@ const onBtnClick = () => {
     return;
   }
 
-  Near.call(contract, "add_message", {
-    text: state.new_message,
+  Near.call(contract, "add_topic", {
+    topic: state.new_message,
   });
 };
 
@@ -28,7 +28,7 @@ const messageForm = (
     <div class="border border-black p-3">
       <label>Mensaje</label>
       <input placeholder="Registra tu topic" onChange={onInputChange} />
-      <button class="btn btn-primary mt-2" onClick={onBtnClick}>
+      <button class="btn btn-warning mt-2" onClick={onBtnClick}>
         Registrar Topic
       </button>
     </div>
@@ -62,7 +62,7 @@ return (
                 <>
                   <tr>
                     <td>{data.sender}</td>
-                    <td>{data.text}</td>
+                    <td>{data.topic}</td>
                     <td>
                       {" "}
                       <button class="btn btn-primary mt-2" onClick={onBtnClick}>
