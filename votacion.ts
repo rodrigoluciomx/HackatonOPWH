@@ -3,7 +3,7 @@ const messages = Near.view(contract, "get_topics", {
   from_index: 0,
   limit: 10,
 }).reverse();
-
+ 
 console.log(messages);
 // Use and manipulate state
 State.init({ new_message: "" });
