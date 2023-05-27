@@ -1,5 +1,5 @@
-const contract = "owaguestbook.testnet";
-const messages = Near.view(contract, "get_messages", {
+const contract = "dev-1685136473783-43667122946905";
+const messages = Near.view(contract, "get_topics", {
   from_index: 0,
   limit: 10,
 }).reverse();
@@ -20,16 +20,18 @@ const onBtnClick = () => {
   Near.call(contract, "add_message", {
     text: state.new_message,
   });
+
+  Near.call(contract, "vote_topic", {
+    text: state.new_message,
+  });
 };
 
 // Define components
-const messageForm = (
+const messageEnviar = (
   <>
     <div class="border border-black p-3">
-      <label>Mensaje</label>
-      <input placeholder="Registra tu topic" onChange={onInputChange} />
-      <button class="btn btn-primary mt-2" onClick={onBtnClick}>
-        Registrar Topic
+      <button class="btn btn-primary m-0 p-1" onClick={onBtnClick}>
+        enviar
       </button>
     </div>
   </>
@@ -44,8 +46,6 @@ return (
   <>
     <div class="container border border-info p-3">
       <h3 class="text-center">The PRIME AI</h3>
-      <h4 class="text-center">Registra un nuevo topic</h4>
-      {context.accountId ? messageForm : notLoggedInWarning}
       <div class="border border-black p-3">
         <h3>Lista de tópicos</h3>
         <table className="table table-hover table-sm">
@@ -54,6 +54,7 @@ return (
               <th>Usuario</th>
               <th>Topic</th>
               <th>Seleccionar</th>
+              <th>Selección</th>
             </tr>
           </thead>
           <tbody>
@@ -62,15 +63,16 @@ return (
                 <>
                   <tr>
                     <td>{data.sender}</td>
-                    <td>{data.text}</td>
+                    <td>{data.topic}</td>
                     <td>
                       {" "}
-                      <select name="select">
+                      <select name="select" onChange={onInputChange}>
                         <option value="yes">Si</option>
-                        <option value="no" selected>
-                          No
-                        </option>
+                        <option value="no">No</option>
                       </select>
+                    </td>
+                    <td>
+                      {context.accountId ? messageEnviar : notLoggedInWarning}
                     </td>
                   </tr>
                 </>
@@ -79,6 +81,31 @@ return (
           </tbody>
         </table>
       </div>
+    </div>
+    <div class="border border-black p-3">
+      <h3>RESULTADOS</h3>
+      <table className="table table-hover table-sm">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>VOTO POSITIVO</th>
+            <th>VOTO NEGATIVO</th>
+          </tr>
+        </thead>
+        <tbody>
+          {messages.map((data, key) => {
+            return (
+              <>
+                <tr>
+                  <td>{data.topic}</td>
+                  <td>{data.yesVotes}</td>
+                  <td>{data.noVotes}</td>
+                </tr>
+              </>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   </>
 );
