@@ -1,9 +1,10 @@
-const contract = "dev-1685136473783-43667122946905";
+//const contract = "dev-1685136473783-43667122946905";
+const contract = "theprimeai.near";
 const messages = Near.view(contract, "get_topics", {
   from_index: 0,
   limit: 10,
 }).reverse();
- 
+
 console.log(messages);
 // Use and manipulate state
 State.init({ new_message: "" });
@@ -22,16 +23,16 @@ const onBtnClick = () => {
   });
 
   Near.call(contract, "vote_topic", {
-    text: state.new_message,
+    topicToUpdate: state.new_message,
   });
 };
 
 // Define components
 const messageEnviar = (
   <>
-    <div class="border border-black p-3">
+    <div class="">
       <button class="btn btn-primary m-0 p-1" onClick={onBtnClick}>
-        enviar
+        Enviar
       </button>
     </div>
   </>
@@ -44,8 +45,17 @@ const notLoggedInWarning = (
 // Render
 return (
   <>
+    <div class="img-fluid  text-center">
+      <div class="col-lg-12">
+        <img
+          class="float-center"
+          src="https://ipfs.near.social/ipfs/bafkreiha52l7x24ynagm37a2kcw62g6h76upfwhred65dvokrjujp6x7ty"
+          width="600"
+        />
+      </div>
+    </div>
     <div class="container border border-info p-3">
-      <h3 class="text-center">The PRIME AI</h3>
+      <h3 class="text-center"></h3>
       <div class="border border-black p-3">
         <h3>Lista de tópicos</h3>
         <table className="table table-hover table-sm">
@@ -62,11 +72,12 @@ return (
               return (
                 <>
                   <tr>
-                    <td>{data.sender}</td>
+                    <td>{data.creator}</td>
                     <td>{data.topic}</td>
                     <td>
                       {" "}
                       <select name="select" onChange={onInputChange}>
+                        <option value="">Escoge</option>
                         <option value="yes">Si</option>
                         <option value="no">No</option>
                       </select>
@@ -98,14 +109,19 @@ return (
               <>
                 <tr>
                   <td>{data.topic}</td>
-                  <td>{data.yesVotes}</td>
-                  <td>{data.noVotes}</td>
+                  <td>5</td>
+                  <td>1</td>
                 </tr>
               </>
             );
           })}
         </tbody>
       </table>
-    </div>
+    </div>{" "}
+    <button class="btn btn-primary mt-2 bg-white" onClick={onBtnClick}>
+      <a href="#/theprimeai.near/widget/MenuOpciones">
+        REGRESAR AL MENÚ PRINCIPAL
+      </a>
+    </button>
   </>
 );
